@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express-app
+  labels:
+    app: express-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: express-app
+  template:
+    metadata:
+      name: express-app
+      labels:
+        app: express-app
+    spec:
+      containers:
+        - name: express-app
+          image: muhohoweb/express-app:1.0.0
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      

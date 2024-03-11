@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "name": "John Brown",
+    "age": 21,
+    "grade": "A"
+  },
+  {
+    "id": 2,
+    "name": "David Smith",
+    "age": 23,
+    "grade": "F"
+  },
+  {
+    "id": 3,
+    "name": "John Wilson",
+    "age": 18,
+    "grade": "D"
+  },
+  {
+    "id": 4,
+    "name": "Sarah Brown",
+    "age": 25,
+    "grade": "F"
+  },
+  {
+    "id": 5,
+    "name": "John Smith",
+    "age": 21,
+    "grade": "A"
+  },
+  {
+    "id": 6,
+    "name": "Sarah Brown",
+    "age": 24,
+    "grade": "D"
+  },
+  {
+    "id": 7,
+    "name": "David Doe",
+    "age": 19,
+    "grade": "A"
+  },
+  {
+    "id": 8,
+    "name": "Emily Smith",
+    "age": 23,
+    "grade": "F"
+  },
+  {
+    "id": 9,
+    "name": "David Doe",
+    "age": 20,
+    "grade": "F"
+  },
+  {
+    "id": 10,
+    "name": "Sarah Doe",
+    "age": 25,
+    "grade": "A"
+  },
+  {
+    "id": 11,
+    "name": "Sarah Smith",
+    "age": 21,
+    "grade": "A"
+  },
+  {
+    "id": 12,
+    "name": "Sarah Johnson",
+    "age": 22,
+    "grade": "F"
+  },
+  {
+    "id": 13,
+    "name": "David Doe",
+    "age": 21,
+    "grade": "D"
+  },
+  {
+    "id": 14,
+    "name": "David Johnson",
+    "age": 18,
+    "grade": "D"
+  },
+  {
+    "id": 15,
+    "name": "David Johnson",
+    "age": 23,
+    "grade": "C"
+  },
+  {
+    "id": 16,
+    "name": "David Smith",
+    "age": 19,
+    "grade": "F"
+  },
+  {
+    "id": 17,
+    "name": "Michael Johnson",
+    "age": 22,
+    "grade": "B"
+  },
+  {
+    "id": 18,
+    "name": "David Doe",
+    "age": 20,
+    "grade": "B"
+  },
+  {
+    "id": 19,
+    "name": "Michael Johnson",
+    "age": 24,
+    "grade": "A"
+  },
+  {
+    "id": 20,
+    "name": "David Brown",
+    "age": 23,
+    "grade": "B"
+  }
+]
