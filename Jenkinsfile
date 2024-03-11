@@ -9,8 +9,8 @@ pipeline {
             steps {
                 script {
                     git branch: 'main',
-                        credentialsId: 'Credential ID',
-                        url: 'https://github.com/username/repository.git'
+                        credentialsId: '9e708a8d-c1d1-4a8a-9632-3b31ad932908',
+                        url: 'https://github.com/silomaben/atq-tests-demo.git'
                 }
             }
         }
