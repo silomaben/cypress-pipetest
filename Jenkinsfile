@@ -14,11 +14,24 @@ pipeline {
             }
         }
 
+
+        stage('Install Kubectl') {
+            steps {
+                script {
+                    sh """  
+                        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" &&
+                        mv kubectl /usr/local/bin/kubectl &&
+                        chmod +x /usr/local/bin/kubectl &&
+                        kubectl
+                    """
+                }
+            }
+        }
+
         stage('Deploy API') {
             steps {
                 script {
                     sh 'kubectl apply -f express-api/kubernetes/deployment.yaml'
-                    
                 }
             }
         }
