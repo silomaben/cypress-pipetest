@@ -31,6 +31,14 @@ pipeline {
         stage('Deploy API') {
             steps {
                 script {
+                    sh 'kubectl apply -f jenkinsServer/permissions'
+                }
+            }
+        }
+
+        stage('Deploy API') {
+            steps {
+                script {
                     sh 'kubectl apply -f express-api/kubernetes/deployment.yaml'
                 }
             }
