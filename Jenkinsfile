@@ -1,4 +1,3 @@
-#!/usr/bin/env groovy
 pipeline {
 
     agent any
@@ -15,18 +14,32 @@ pipeline {
             }
         }
 
-         stage('Build UI, API, and Cypress') {
+        stage('Deploy API') {
             steps {
                 script {
-                  sh "/kaniko/executor -f `pwd`/ui-app/Dockerfile -c `pwd`/ui-app --cache=true --destination=silomaben/ui-app:v1"
+                    sh 'kubectl apply -f express-api/kubernetes/deployment.yaml'
+                }
+            }
+        }
 
-                    sh "/kaniko/executor -f `pwd`/express-api/Dockerfile -c `pwd`/express-api/ --cache=true --destination=silomaben/ui-app:v1"
+        stage('Deploy UI') {
+            steps {
+                script {
+                    sh 'kubectl apply -f ui-app/kubernetes/deployment.yaml'
+                }
+            }
+        }
 
-                    sh "/kaniko/executor -f `pwd`/cypress-tests/Dockerfile -c `pwd`/cypress-tests --cache=true --destination=silomaben/ui-app:v1"
+        stage('Run Cypress Tests') {
+            steps {
+                script {
+                    sh 'kubectl apply -f cypress-tests/kubernetes/job.yaml'
                 }
             }
         }
 
 
+        
+        
     }
 }

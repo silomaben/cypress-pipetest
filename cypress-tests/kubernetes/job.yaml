@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: e2e-test-app-job
+spec:
+  template:
+    metadata:
+      name: e2e-test-app-pod
+    spec:
+      containers:
+        - name: e2e-test-app
+          image: fideliswaweu19/cypress-test
+          ports:
+            - containerPort: 80
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Never
+

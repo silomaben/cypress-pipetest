@@ -17,9 +17,41 @@ spec:
     spec:
       containers:
         - name: express-app
-          image: muhohoweb/express-app:1.0.0
+          image: fideliswaweu19/api
           ports:
             - containerPort: 3000
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-app-service
+spec:
+  selector:
+    app: express-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: NodePort
+---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: express-api-ingress
+# spec:
+#   ingressClassName: nginx
+#   rules:
+#     - host: localhost
+#       http:
+#         paths:
+#           - path: /express/api/v1/
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: express-app-service
+#                 port:
+#                   number: 80
+
       
