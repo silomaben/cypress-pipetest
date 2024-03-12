@@ -28,13 +28,7 @@ pipeline {
             }
         }
 
-        stage('set permissions') {
-            steps {
-                script {
-                    sh 'kubectl apply -f jenkinsServer/permissions'
-                }
-            }
-        }
+        
 
         stage('Deploy API') {
             steps {
