@@ -18,6 +18,7 @@ pipeline {
             steps {
                 script {
                     sh 'kubectl apply -f express-api/kubernetes/deployment.yaml'
+                    
                 }
             }
         }
