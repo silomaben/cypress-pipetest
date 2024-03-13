@@ -15,7 +15,6 @@
 #           imagePullPolicy: IfNotPresent
 #       restartPolicy: Never
 
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -36,6 +35,4 @@ spec:
           ports:
             - containerPort: 80
           imagePullPolicy: IfNotPresent
-  restartPolicy: Never
-
-
+      restartPolicy: Never
