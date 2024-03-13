@@ -1,33 +1,11 @@
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: e2e-test-app-job
-# spec:
-#   template:
-#     metadata:
-#       name: e2e-test-app-pod
-#     spec:
-#       containers:
-#         - name: e2e-test-app
-#           image: silomaben/cypress-tests
-#           ports:
-#             - containerPort: 80
-#           imagePullPolicy: IfNotPresent
-#       restartPolicy: Never
-
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: e2e-test-app-job
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: e2e-test-app
   template:
     metadata:
-      labels:
-        app: e2e-test-app
+      name: e2e-test-app-pod
     spec:
       containers:
         - name: e2e-test-app
@@ -35,4 +13,27 @@ spec:
           ports:
             - containerPort: 80
           imagePullPolicy: IfNotPresent
-      restartPolicy: Always
+      restartPolicy: Never
+
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: e2e-test-app-job
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: e2e-test-app
+#   template:
+#     metadata:
+#       labels:
+#         app: e2e-test-app
+#     spec:
+#       containers:
+#         - name: e2e-test-app
+#           image: silomaben/cypress-tests
+#           ports:
+#             - containerPort: 80
+#           imagePullPolicy: IfNotPresent
+#       restartPolicy: Always
