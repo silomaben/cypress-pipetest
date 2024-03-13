@@ -17,42 +17,22 @@ pipeline {
 
         stage('Install Kubectl') {
             steps {
-                script {
-                    sh '''  
-                        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" &&
-                        mv kubectl /usr/local/bin/kubectl &&
-                        chmod +x /usr/local/bin/kubectl &&
-                        kubectl
-                    '''
-                }
+
+
+                      withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
+     sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'  
+          sh 'chmod u+x ./kubectl'  
+          sh './kubectl get nodes'
+          sh 'kubectl apply -f express-api/kubernetes/deployment.yaml'
+          sh 'kubectl apply -f ui-app/kubernetes/deployment.yaml'
+          sh 'kubectl apply -f cypress-tests/kubernetes/job.yaml'
+            } 
+                
             }
         }
 
         
 
-        stage('Deploy API') {
-            steps {
-                script {
-                    sh 'kubectl apply -f express-api/kubernetes/deployment.yaml'
-                }
-            }
-        }
-
-        stage('Deploy UI') {
-            steps {
-                script {
-                    sh 'kubectl apply -f ui-app/kubernetes/deployment.yaml'
-                }
-            }
-        }
-
-        stage('Run Cypress Tests') {
-            steps {
-                script {
-                    sh 'kubectl apply -f cypress-tests/kubernetes/job.yaml'
-                }
-            }
-        }
 
 
         
