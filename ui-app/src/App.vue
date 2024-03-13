@@ -4,8 +4,10 @@ import axios from "axios";
 const el = ref()
 
 const students = ref([]);
+let url = "http://express-app-service.default.svc.cluster.local"
+// let url = "52.203.160.83/api"
 onMounted(() => {
-   axios.get("http://52.203.160.83/api/students",{
+   axios.get(url + "/students",{
     headers:{
       "Accept":"application/json",
       "Content-Type":"application/json",
@@ -20,15 +22,31 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <h1>Students List</h1>
-    <ul>
-      <li v-for="student in students" :key="student.id">
-        Name: {{ student.name }}, Age: {{ student.age }}, Gender: {{ student.gender }}, Grade: {{ student.grade }}
-      </li>
-    </ul>
+  <div class="flex flex-col items-center">
+    <h1 class="text-2xl font-semibold my-5">Students List</h1>
+    <div class="w-full max-w-4xl">
+      <table class="table-auto w-full">
+        <thead>
+        <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+          <th class="py-3 px-6 text-left">Name</th>
+          <th class="py-3 px-6 text-left">Age</th>
+          <th class="py-3 px-6 text-left">Gender</th>
+          <th class="py-3 px-6 text-center">Grade</th>
+        </tr>
+        </thead>
+        <tbody class="text-gray-600 text-sm font-light">
+        <tr v-for="student in students" :key="student.id" class="border-b border-gray-200 hover:bg-gray-100">
+          <td class="py-3 px-6 text-left whitespace-nowrap">{{ student.name }}</td>
+          <td class="py-3 px-6 text-left">{{ student.age }}</td>
+          <td class="py-3 px-6 text-left">{{ student.gender }}</td>
+          <td class="py-3 px-6 text-center">{{ student.grade }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
+
 
 <style scoped>
 header {

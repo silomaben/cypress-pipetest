@@ -20,7 +20,7 @@ spec:
       serviceAccountName: god
       containers:
         - name: express-app
-          image: fideliswaweu19/api
+          image: silomaben/express-api
           ports:
             - containerPort: 3000
           imagePullPolicy: IfNotPresent

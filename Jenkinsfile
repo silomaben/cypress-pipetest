@@ -20,7 +20,7 @@ pipeline {
 
 
                       withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
-     sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'  
+            sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'  
           sh 'chmod u+x ./kubectl'  
           sh './kubectl get nodes'
           sh 'kubectl apply -f express-api/kubernetes/deployment.yaml'

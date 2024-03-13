@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
         - name: e2e-test-app
-          image: fideliswaweu19/cypress-test
+          image: silomaben/cypress-tests
           ports:
             - containerPort: 80
           imagePullPolicy: IfNotPresent
