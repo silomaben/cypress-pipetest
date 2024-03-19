@@ -62,13 +62,13 @@ pipeline {
           sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
 
 
-          def jenkinsPodName = sh(
-                            script: "kubectl get pods -n jenkins -l app.kubernetes.io/component=jenkins -o jsonpath='{.items[0].metadata.name}'",
-                            returnStdout: true
-                        ).trim()
+        //   def jenkinsPodName = sh(
+        //                     script: "kubectl get pods -n jenkins -l app.kubernetes.io/component=jenkins -o jsonpath='{.items[0].metadata.name}'",
+        //                     returnStdout: true
+        //                 ).trim()
                         
                         // Execute kubectl exec command to fetch the file
-                        sh "kubectl exec $jenkinsPodName -- cat /var/jenkins_home/jobs/cypress-e2e/branches/main/builds/8/archive/cypress-tests/cypress/reports/html/index.html > report.html"
+                        sh "kubectl exec jenkins-7c578f9b5d-2hkwg -- cat /var/jenkins_home/jobs/cypress-e2e/branches/main/builds/8/archive/cypress-tests/cypress/reports/html/index.html > report.html"
                         
                         // Archive the fetched file as an artifact
                         archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
