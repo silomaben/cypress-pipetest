@@ -72,8 +72,6 @@ pipeline {
 
         stage('Fetch Index File') {
             steps {
-                script {
-                    // Get the Jenkins pod name dynamically
                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                         def jenkinsPodName = sh(
                             script: "kubectl get pods -n jenkins -l app.kubernetes.io/component=jenkins -o jsonpath='{.items[0].metadata.name}'",
@@ -86,7 +84,7 @@ pipeline {
                         // Archive the fetched file as an artifact
                         archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
                     }
-                }
+                
             }
         }
 
