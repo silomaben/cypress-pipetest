@@ -55,7 +55,7 @@ spec:
             claimName: jenkins-pv-claim
       initContainers:
         - name: copy-report
-          image: busybox
+          image: bitnami/kubectl
           command:
             - sh
             - -c
