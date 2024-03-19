@@ -61,14 +61,17 @@ spec:
             - -c
             - |
               echo "Copying report..."
-              cd var
               find . -type f -name "index.html"
+              echo "next search"
+              find . -type d -name "reports"
+              cd var
               cd jenkins_home
               cd workspace
               cd cypress-e2e_main
               pwd
               ls
               cd ..
+              pwd
               cd jobs
               pwd
               ls
