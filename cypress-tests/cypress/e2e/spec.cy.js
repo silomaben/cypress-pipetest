@@ -1,4 +1,4 @@
-describe('template spec', () => {
+describe('cypress tests up', () => {
   it('Student List was found', () => {
     cy.wait(4000)
     cy.visit('/');

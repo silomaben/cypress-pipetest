@@ -13,7 +13,7 @@ pipeline {
                 script {
                     git branch: 'main',
                         credentialsId: '9e708a8d-c1d1-4a8a-9632-3b31ad932908',
-                        url: 'https://github.com/silomaben/atq-tests-demo.git'
+                        url: 'https://github.com/silomaben/cypress-pipetest.git'
                 }
             }
         }
