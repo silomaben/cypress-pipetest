@@ -14,6 +14,34 @@ pipeline {
             }
         }
 
+        stage('Cleanup Workspace') {
+            steps {
+                script {
+                    def workspaces = sh(script: 'ls -d /var/jenkins_home/workspace/*', returnStdout: true).trim().split('\n')
+
+                    if (workspaces.size() > maxWorkspaces) {
+                        def oldestWorkspace = workspaces[0]
+                        for (int i = 1; i < workspaces.size(); i++) {
+                            def workspace = workspaces[i]
+                            def oldestTime = sh(script: "stat -c '%Y' $oldestWorkspace", returnStdout: true).trim().toLong()
+                            def currentTime = sh(script: "stat -c '%Y' $workspace", returnStdout: true).trim().toLong()
+
+                            if (currentTime < oldestTime) {
+                                oldestWorkspace = workspace
+                                oldestTime = currentTime
+                            }
+                        }
+
+                        sh "rm -rf $oldestWorkspace"
+                        echo "Deleted oldest workspace: $oldestWorkspace"
+                    }
+                }
+            }
+        }
+
+        // Add your other stages here
+    }
+
 
         stage('Install Kubectl') {
             steps {
