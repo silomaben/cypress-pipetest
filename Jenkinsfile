@@ -41,8 +41,7 @@ pipeline {
             }
         }
 
-        // Add your other stages here
-    }
+    
 
 
         stage('Install Kubectl') {
