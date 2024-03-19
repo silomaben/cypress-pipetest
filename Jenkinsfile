@@ -68,29 +68,21 @@ pipeline {
 
 
 
-        stage('Wait for Index File') {
-            steps {
-                script {
-                    def timeout = 600 // Timeout in seconds (adjust as needed)
-                    def interval = 10 // Interval in seconds for checking file existence
-
-                    def endTime = currentBuild.startTimeInMillis + (timeout * 1000)
-
-                    // Loop until either the file is found or timeout is reached
-                    while (!fileExists('cypress-tests/cypress/reports/html/index.html')) {
-                        if (System.currentTimeMillis() > endTime) {
-                            error "Timeout reached. Index file not found."
-                        }
-                        sleep interval
-                    }
-                }
-            }
-        }
+        
 
         stage('Fetch Index File') {
-            steps {
-                // Fetch the index file once it's created
-                archiveArtifacts artifacts: 'cypress-tests/cypress/reports/html/index.html', onlyIfSuccessful: true
+            // steps {
+            //     // Fetch the index file once it's created
+            //     archiveArtifacts artifacts: 'cypress-tests/cypress/reports/html/index.html', onlyIfSuccessful: true
+            // }
+             steps {
+                script {
+                    // Execute kubectl exec command to fetch the file
+                    sh "kubectl exec <jenkins-pod-name> -- cat /var/jenkins_home/jobs/cypress-e2e/branches/main/builds/8/archive/cypress-tests/cypress/reports/html/index.html > report.html"
+                    
+                    // Archive the fetched file as an artifact
+                    archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
+                }
             }
         }
 
