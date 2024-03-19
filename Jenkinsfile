@@ -2,6 +2,8 @@ pipeline {
 
     agent any
     
+    def maxWorkspaces = 2
+
     stages {
 
         stage('Git Checkout') {
