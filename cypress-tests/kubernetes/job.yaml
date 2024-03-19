@@ -63,6 +63,11 @@ spec:
               echo "Copying report..."
               cd var
               cd jenkins_home
+              cd workspace
+              pwd
+              ls
+              cd ..
+              cd jobs
               pwd
               ls
               kubectl cp /app/cypress/reports/html/index.html jenkins:/var/jenkins_home
