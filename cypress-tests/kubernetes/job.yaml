@@ -10,7 +10,7 @@
 #   persistentVolumeReclaimPolicy: Retain
 #   storageClassName: standard
 #   hostPath:
-#     path: /c/Users/BenardSilomaMasikond/Desktop/kubernetes/jenkinsData
+#     path: c:/Users/BenardSilomaMasikond/Desktop/kubernetes/jenkinsData
 
 # ---
 
@@ -53,6 +53,19 @@ spec:
         - name: jenkins-vol
           persistentVolumeClaim: 
             claimName: jenkins-pv-claim
+      initContainers:
+        - name: copy-report
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              echo "Copying report..."
+              kubectl cp /app/cypress/reports/html/index.html jenkins:/var/jenkins_home
+              echo "Report copied successfully."
+          volumeMounts:
+            - name: jenkins-vol
+              mountPath: /var/jenkins_home
 
 
 # apiVersion: apps/v1
