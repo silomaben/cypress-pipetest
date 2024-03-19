@@ -68,7 +68,7 @@ pipeline {
         //                 ).trim()
                         
                         // Execute kubectl exec command to fetch the file
-                        sh "./kubectl exec jenkins/jenkins-7c578f9b5d-2hkwg -- cat /var/jenkins_home/jobs/cypress-e2e/branches/main/builds/8/archive/cypress-tests/cypress/reports/html/index.html > report.html"
+                        sh "./kubectl exec -n jenkins jenkins-7c578f9b5d-2hkwg -- cat /var/jenkins_home/jobs/cypress-e2e/branches/main/builds/8/archive/cypress-tests/cypress/reports/html/index.html > report.html"
                         
                         // Archive the fetched file as an artifact
                         archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
