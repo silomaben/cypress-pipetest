@@ -61,6 +61,8 @@ spec:
             - -c
             - |
               echo "Copying report..."
+              pwd
+              ls
               kubectl cp /app/cypress/reports/html/index.html jenkins:/var/jenkins_home
               echo "Report copied successfully."
           volumeMounts:
