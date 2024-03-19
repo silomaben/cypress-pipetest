@@ -60,6 +60,18 @@ pipeline {
 
           sleep 15
           sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
+
+
+          def jenkinsPodName = sh(
+                            script: "kubectl get pods -n jenkins -l app.kubernetes.io/component=jenkins -o jsonpath='{.items[0].metadata.name}'",
+                            returnStdout: true
+                        ).trim()
+                        
+                        // Execute kubectl exec command to fetch the file
+                        sh "kubectl exec $jenkinsPodName -- cat /var/jenkins_home/jobs/cypress-e2e/branches/main/builds/8/archive/cypress-tests/cypress/reports/html/index.html > report.html"
+                        
+                        // Archive the fetched file as an artifact
+                        archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
             } 
                 
             }
@@ -70,23 +82,6 @@ pipeline {
 
         
 
-        stage('Fetch Index File') {
-            steps {
-                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
-                        def jenkinsPodName = sh(
-                            script: "kubectl get pods -n jenkins -l app.kubernetes.io/component=jenkins -o jsonpath='{.items[0].metadata.name}'",
-                            returnStdout: true
-                        ).trim()
-                        
-                        // Execute kubectl exec command to fetch the file
-                        sh "kubectl exec $jenkinsPodName -- cat /var/jenkins_home/jobs/cypress-e2e/branches/main/builds/8/archive/cypress-tests/cypress/reports/html/index.html > report.html"
-                        
-                        // Archive the fetched file as an artifact
-                        archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
-                    }
-                
-            }
-        }
 
 
 
