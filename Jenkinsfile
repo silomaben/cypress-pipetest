@@ -57,6 +57,8 @@ pipeline {
           sh './kubectl get all'
           sh './kubectl apply -f express-api/kubernetes/deployment.yaml'
           sh './kubectl apply -f ui-app/kubernetes/deployment.yaml'
+
+          sleep 15
           sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
             } 
                 
