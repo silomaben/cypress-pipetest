@@ -71,17 +71,21 @@ pipeline {
         
 
         stage('Fetch Index File') {
-            // steps {
-            //     // Fetch the index file once it's created
-            //     archiveArtifacts artifacts: 'cypress-tests/cypress/reports/html/index.html', onlyIfSuccessful: true
-            // }
-             steps {
+            steps {
                 script {
-                    // Execute kubectl exec command to fetch the file
-                    sh "kubectl exec <jenkins-pod-name> -- cat /var/jenkins_home/jobs/cypress-e2e/branches/main/builds/8/archive/cypress-tests/cypress/reports/html/index.html > report.html"
-                    
-                    // Archive the fetched file as an artifact
-                    archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
+                    // Get the Jenkins pod name dynamically
+                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
+                        def jenkinsPodName = sh(
+                            script: "kubectl get pods -n jenkins -l app.kubernetes.io/component=jenkins -o jsonpath='{.items[0].metadata.name}'",
+                            returnStdout: true
+                        ).trim()
+                        
+                        // Execute kubectl exec command to fetch the file
+                        sh "kubectl exec $jenkinsPodName -- cat /var/jenkins_home/jobs/cypress-e2e/branches/main/builds/8/archive/cypress-tests/cypress/reports/html/index.html > report.html"
+                        
+                        // Archive the fetched file as an artifact
+                        archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
+                    }
                 }
             }
         }
