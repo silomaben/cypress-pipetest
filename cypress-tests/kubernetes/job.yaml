@@ -1,19 +1,33 @@
-# apiVersion: batch/v1
-# kind: Job
+# apiVersion: v1
+# kind: PersistentVolume
 # metadata:
-#   name: e2e-test-app-job
+#   name: cypress-reports-pv
 # spec:
-#   template:
-#     metadata:
-#       name: e2e-test-app-pod
-#     spec:
-#       containers:
-#         - name: e2e-test-app
-#           image: silomaben/cypress-tests
-#           ports:
-#             - containerPort: 80
-#           imagePullPolicy: IfNotPresent
-#       restartPolicy: Never
+#   capacity:
+#     storage: 1Gi
+#   accessModes:
+#     - ReadWriteOnce
+#   persistentVolumeReclaimPolicy: Retain
+#   storageClassName: standard
+#   hostPath:
+#     path: /c/Users/BenardSilomaMasikond/Desktop/kubernetes/jenkinsData
+
+# ---
+
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: cypress-reports-pvc
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 1Gi
+#   storageClassName: standard
+
+
+
 
 apiVersion: batch/v1
 kind: Job
@@ -25,22 +39,19 @@ spec:
       name: e2e-test-app-pod
     spec:
       containers:
-      - name: e2e-test-app
-        image: silomaben/cypress-tests
-        ports:
-        - containerPort: 80
-        imagePullPolicy: IfNotPresent
-      - name: results-collector
-        image: busybox:latest
-        command: ["sh", "-c", "cp -r /app/* /test-results && sleep infinity"]
-      # Replace with a command to collect and store results in the emptyDir
-        volumeMounts:
-        - name: test-results
-          mountPath: /test-results
-      volumes:
-      - name: test-results
-        emptyDir: {}
+        - name: e2e-test-app
+          image: silomaben/cypress-tests
+          ports:
+            - containerPort: 80
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: jenkins-vol
+              mountPath: /var/jenkins_home
       restartPolicy: Never
+      volumes:
+        - name: jenkins-vol
+          persistentVolumeClaim: 
+            claimName: jenkins-pv-claim
 
 
 # apiVersion: apps/v1
