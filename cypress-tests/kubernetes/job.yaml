@@ -62,8 +62,10 @@ spec:
             - |
               echo "Copying report..."
               cd var
+              find . -type f -name "index.html"
               cd jenkins_home
               cd workspace
+              cd cypress-e2e_main
               pwd
               ls
               cd ..
