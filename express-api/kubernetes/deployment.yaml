@@ -16,8 +16,6 @@ spec:
       labels:
         app: express-app
     spec:
-      serviceAccount: god    
-      serviceAccountName: god
       containers:
         - name: express-app
           image: silomaben/express-api
