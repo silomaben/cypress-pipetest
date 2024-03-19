@@ -13,7 +13,7 @@ module.exports = defineConfig({
     quest: true
   },
   e2e: {
-    baseUrl: "http://ui-app.default.svc.cluster.local",
+    baseUrl: "http://ui-app.jenkins.svc.cluster.local",
     setupNodeEvents(on, config) {
       require('cypress-mochawesome-reporter/plugin')(on);
     },
