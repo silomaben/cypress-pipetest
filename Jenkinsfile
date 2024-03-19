@@ -1,8 +1,10 @@
+def maxWorkspaces = 2
+
+
 pipeline {
 
     agent any
     
-    def maxWorkspaces = 2
 
     stages {
 
