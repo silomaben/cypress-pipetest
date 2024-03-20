@@ -23,17 +23,3 @@ spec:
             - containerPort: 80
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ui-app
-  namespace: jenkins 
-spec:
-  selector:
-    app: ui-app
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-  type: LoadBalancer
