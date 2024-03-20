@@ -1,9 +1,9 @@
-def podName = sh(script: './kubectl get pods -n jenkins -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
+               
+pipeline {
+
+    def podName = sh(script: './kubectl get pods -n jenkins -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
                         
 echo "Found pod name: $podName"
-                        
-                        
-pipeline {
 
     agent any
 
