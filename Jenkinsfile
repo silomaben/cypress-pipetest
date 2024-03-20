@@ -38,38 +38,16 @@ pipeline {
                             // sleep 15
                             sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
 
-                            sh "./kubectl exec -n jenkins jenkins-7c578f9b5d-2hkwg -- cat /var/jenkins_home/html/index.html > report.html"
-                                    
-                            archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
+                            def podName = sh(script: './kubectl get pods -n jenkins -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
+                        echo "Found pod name: $podName"
+                        sh "./kubectl exec -n jenkins $podName -- cat /var/jenkins_home/html/index.html > report.html"
+                        archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
             } 
                 
             }
         }
 
-        // stage('e2e run') {
-        //     steps {
-        //         sh """
-        //             cd cypress-tests
-        //             npm install
-        //             npm run cy:run
-                
-        //         """
-        //     }
-        // }
-
-
-
-
-        
-
-
-
-
-        
-
-
-
-        
+  
         
     }
 }
