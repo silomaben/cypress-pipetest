@@ -32,7 +32,7 @@ pipeline {
                             sh './kubectl apply -f ui-app/kubernetes/deployment.yaml'
 
                             // sleep 15
-                            // sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
+                            sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
 
                             // sh "./kubectl exec -n jenkins jenkins-7c578f9b5d-2hkwg -- cat /var/jenkins_home/jobs/cypress-e2e/branches/main/builds/19/archive/cypress-tests/cypress/reports/html/index.html > report.html"
                                     

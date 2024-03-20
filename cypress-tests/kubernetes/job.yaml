@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: e2e-test-app
-          image: silomaben/cypress-test
+          image: silomaben/cypress_tests
           ports:
             - containerPort: 80
           imagePullPolicy: IfNotPresent
@@ -53,34 +53,7 @@ spec:
         - name: jenkins-vol
           persistentVolumeClaim: 
             claimName: jenkins-pv-claim
-      initContainers:
-        - name: copy-report
-          image: bitnami/kubectl
-          command:
-            - sh
-            - -c
-            - |
-              echo "Copying report..."
-              find . -type f -name "index.html"
-              echo "next search"
-              find . -type d -name "reports"
-              cd var
-              cd jenkins_home
-              cd workspace
-              cd cypress-e2e_main
-              pwd
-              ls
-              cd ..
-              pwd
-              cd jobs
-              pwd
-              ls
-              kubectl cp /app/cypress/reports/html/index.html jenkins:/var/jenkins_home
-              echo "Report copied successfully."
-          volumeMounts:
-            - name: jenkins-vol
-              mountPath: /var/jenkins_home
-
+     
 
 # apiVersion: apps/v1
 # kind: Deployment
@@ -103,3 +76,30 @@ spec:
 #             - containerPort: 80
 #           imagePullPolicy: IfNotPresent
 #       restartPolicy: Always
+        # initContainers:
+        #         - name: copy-report
+        #           image: bitnami/kubectl
+        #           command:
+        #             - sh
+        #             - -c
+        #             - |
+        #               echo "Copying report..."
+        #               find . -type f -name "index.html"
+        #               echo "next search"
+        #               find . -type d -name "reports"
+        #               cd var
+        #               cd jenkins_home
+        #               cd workspace
+        #               cd cypress-e2e_main
+        #               pwd
+        #               ls
+        #               cd ..
+        #               pwd
+        #               cd jobs
+        #               pwd
+        #               ls
+        #               kubectl cp /app/cypress/reports/html/index.html jenkins:/var/jenkins_home
+        #               echo "Report copied successfully."
+        #           volumeMounts:
+        #             - name: jenkins-vol
+        #               mountPath: /var/jenkins_home
