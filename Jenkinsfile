@@ -42,6 +42,7 @@ pipeline {
                         sh 'chmod u+x ./kubectl'
                         sh './kubectl get nodes'
                         sh './kubectl get all'
+                        sh 'rm -f /var/jenkins_home/html/index.html'
                         sh './kubectl apply -f express-api/kubernetes/deployment.yaml'
                         sh './kubectl apply -f ui-app/kubernetes/deployment.yaml'
                         // sleep 15

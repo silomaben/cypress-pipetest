@@ -1,4 +1,4 @@
-describe('cypress hurraaa ', () => {
+describe('cypress works as exprected thank you very much! ', () => {
   it('Student List was found by the silent G', () => {
     cy.wait(4000)
     cy.visit('/');
