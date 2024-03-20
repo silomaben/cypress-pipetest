@@ -45,11 +45,9 @@ pipeline {
         stage('e2e run') {
             steps {
                 sh """
-
-                pwd
-                cd ../../ 
-                pwd
-                ls
+                    cd cypress-tests
+                    npm install
+                    npm run cy:run
                 
                 """
             }
