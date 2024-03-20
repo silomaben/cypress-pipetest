@@ -42,7 +42,7 @@ pipeline {
             }
         }
 
-        stage('Git Checkout') {
+        stage('e2e run') {
             steps {
                 sh """
 
