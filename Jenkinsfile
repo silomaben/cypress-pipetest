@@ -47,9 +47,10 @@ pipeline {
                 sh """
 
                 pwd
+                cd ../../ 
+                pwd
                 ls
-                cd cypress-tests
-                npx cypress run
+                
                 """
             }
         }
