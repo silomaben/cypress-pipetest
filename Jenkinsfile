@@ -47,6 +47,8 @@ pipeline {
                         sh './kubectl apply -f ui-app/kubernetes/deployment.yaml'
                         // sleep 15
                         sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
+
+                        waitForIndexHtml()
                         sh "./kubectl exec -n jenkins $podName -- cat /var/jenkins_home/html/index.html > report.html"
                         archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
                     }
@@ -54,4 +56,18 @@ pipeline {
             }
         }
     }
+}
+
+def waitForIndexHtml() {
+    timeout(time: 5, unit: 'MINUTES') {
+        // Loop until the index.html file exists or timeout occurs
+        while (!fileExists('/var/jenkins_home/html/index.html')) {
+            echo 'Waiting for index.html file to exist...'
+            sleep 10 // Wait for 10 seconds before checking again
+        }
+    }
+}
+
+def fileExists(filePath) {
+    return file(filePath).exists()
 }
