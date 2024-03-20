@@ -1,3 +1,8 @@
+def podName = sh(script: './kubectl get pods -n jenkins -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
+                        
+echo "Found pod name: $podName"
+                        
+                        
 pipeline {
 
     agent any
@@ -38,8 +43,7 @@ pipeline {
                             // sleep 15
                             sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
 
-                            def podName = sh(script: './kubectl get pods -n jenkins -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
-                        echo "Found pod name: $podName"
+                            
                         sh "./kubectl exec -n jenkins $podName -- cat /var/jenkins_home/html/index.html > report.html"
                         archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
             } 
