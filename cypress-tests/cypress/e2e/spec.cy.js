@@ -1,5 +1,5 @@
-describe('cypress tests up', () => {
-  it('Student List was found', () => {
+describe('cypress hurraaa ', () => {
+  it('Student List was found by the silent G', () => {
     cy.wait(4000)
     cy.visit('/');
     

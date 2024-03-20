@@ -36,26 +36,26 @@ pipeline {
                             sh './kubectl apply -f ui-app/kubernetes/deployment.yaml'
 
                             // sleep 15
-                            // sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
+                            sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
 
-                            // sh "./kubectl exec -n jenkins jenkins-7c578f9b5d-2hkwg -- cat /var/jenkins_home/jobs/cypress-e2e/branches/main/builds/19/archive/cypress-tests/cypress/reports/html/index.html > report.html"
+                            sh "./kubectl exec -n jenkins jenkins-7c578f9b5d-2hkwg -- cat /var/jenkins_home/html/index.html > report.html"
                                     
-                            // archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
+                            archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
             } 
                 
             }
         }
 
-        stage('e2e run') {
-            steps {
-                sh """
-                    cd cypress-tests
-                    npm install
-                    npm run cy:run
+        // stage('e2e run') {
+        //     steps {
+        //         sh """
+        //             cd cypress-tests
+        //             npm install
+        //             npm run cy:run
                 
-                """
-            }
-        }
+        //         """
+        //     }
+        // }
 
 
 
