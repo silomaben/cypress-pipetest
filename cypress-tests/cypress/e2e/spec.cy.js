@@ -6,4 +6,13 @@ describe('cypress works!', () => {
     
     cy.get(".text-2xl").contains("Students List")
   })
+
+
+  it('Student List will not be found and will fail', () => {
+    cy.wait(4000)
+    cy.visit('/');
+    
+    
+    cy.get(".text-wjkwjw2xl").contains("Students List")
+  })
 })
