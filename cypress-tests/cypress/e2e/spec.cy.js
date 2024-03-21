@@ -1,5 +1,5 @@
 describe('cypress works!', () => {
-  it('Student List was found successfully--', () => {
+  it('Student List was found successfully--for sure', () => {
     cy.wait(4000)
     cy.visit('/');
     
