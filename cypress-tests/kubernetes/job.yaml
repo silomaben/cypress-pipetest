@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: e2e-test-app
-          image: silomaben/cypress-e2e
+          image: silomaben/e2e-cypress:latest
           ports:
             - containerPort: 80
           imagePullPolicy: IfNotPresent
