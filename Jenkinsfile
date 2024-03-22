@@ -105,7 +105,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    if(deploy){
+                    if(deploy==true){
                     echo "Deploying ATQ now"
                     }
                 }
