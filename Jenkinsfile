@@ -33,12 +33,6 @@ pipeline {
 
                         sh 'rm -f /var/jenkins_home/html/index.html' 
 
-                        sh "./kubectl delete -n jenkins deployment express-app"
-                        sh "./kubectl delete -n jenkins deployment ui-app"
-                        sh "./kubectl delete -n jenkins job e2e-test-app-job"
-                        sh "./kubectl delete -n jenkins service ui-app"
-                        sh "./kubectl delete -n jenkins service express-app-service"
-
                         sh './kubectl apply -f express-api/kubernetes'
                         sh './kubectl apply -f ui-app/kubernetes'
                         sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
