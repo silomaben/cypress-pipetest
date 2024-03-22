@@ -25,7 +25,12 @@ pipeline {
             steps {
                 script {
                      withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {    
-                        sh ' pwd'                  
+                        sh ''' 
+                        pwd
+                        ls
+                        cd ..
+                        ls
+                        '''                  
                         podName = sh(script: './kubectl get pods -n jenkins -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
                         echo "Found pod name: $podName"
                     }
