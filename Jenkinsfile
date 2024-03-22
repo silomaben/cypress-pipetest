@@ -48,7 +48,7 @@ pipeline {
                      withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
                         jenkinsPod = sh(script: './kubectl get pods -n jenkins -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
                         echo "Found pod name: $jenkinsPod"
-                        cypressPod = sh(script: "./kubectl get pods -n jenkins -l job-name=${env.jobName} -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
+                        cypressPod = sh(script: "./kubectl get pods -n jenkins -l job-name=e2e-test-app-job -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
                         echo "Found Cypress pod name: $cypressPod"
                     }
                 }
