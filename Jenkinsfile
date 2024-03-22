@@ -80,7 +80,7 @@ pipeline {
                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
 
                         // Run kubectl logs command and store the output
-                        logs = sh(script: "./kubectl logs -n jenkins $jenkinsPod -c e2e-test-app", returnStdout: true).trim()
+                        logs = sh(script: "./kubectl logs -n jenkins $cypressPod -c e2e-test-app", returnStdout: true).trim()
 
                         // Check if the text "all specs passed" is present in the logs
                         if (logs.contains("all specs passed")) {
