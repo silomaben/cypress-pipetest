@@ -100,7 +100,9 @@ pipeline {
             steps {
                 script {
                     if(deploy==true){
-                    echo "Deploying ATQ now"
+                        echo "Niiice!!! Deploying ATQ now."
+                    } else {
+                        echo "Deploying aborted. Check and resolve the failing test and try again!"
                     }
                 }
             }
