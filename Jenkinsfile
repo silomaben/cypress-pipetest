@@ -64,9 +64,11 @@ pipeline {
         stage('Wait for tests to run and report generation') {
             steps {
                 script {
+                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                     waitForReport()
                     sh "./kubectl exec -n jenkins $jenkinsPod -- cat /var/jenkins_home/html/index.html > report.html"
                     archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
+                    }
                 }
             }
         }
