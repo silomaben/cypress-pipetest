@@ -51,8 +51,6 @@ pipeline {
                         sh "./kubectl exec -n jenkins $podName -- cat /var/jenkins_home/html/index.html > report.html"
                         archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
 
-                        
-
                         //kill the created pods and service.
 
                         // sh "./kubectl delete -n jenkins deployment express-app"
