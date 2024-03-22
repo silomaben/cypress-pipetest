@@ -6,7 +6,8 @@ pipeline {
     }
     
     environment {
-        podName = ''
+        jenkinsPod = ''
+        cypressPod = ''
     }
 
     stages {
@@ -21,7 +22,25 @@ pipeline {
         }
 
 
-        stage('Get Pod Name') {
+        stage('Start Pods for Testing') {
+            steps {
+                script {
+                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+                        // sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'
+                        // sh 'chmod u+x ./kubectl'
+
+                        sh 'rm -f /var/jenkins_home/html/index.html' 
+
+                        sh './kubectl apply -f express-api/kubernetes'
+                        sh './kubectl apply -f ui-app/kubernetes'
+                        sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
+
+                    }
+                }
+            }
+        }
+
+        stage('Get Pod Names') {
             steps {
                 script {
                      withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
@@ -37,21 +56,23 @@ pipeline {
             steps {
                 script {
                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
-                        sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'
-                        sh 'chmod u+x ./kubectl'
-
-                        sh 'rm -f /var/jenkins_home/html/index.html' 
-
-                        sh './kubectl apply -f express-api/kubernetes'
-                        sh './kubectl apply -f ui-app/kubernetes'
-                        sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
-
+                        
                         waitForReport()
 
                         sh "./kubectl exec -n jenkins $podName -- cat /var/jenkins_home/html/index.html > report.html"
                         archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
 
-                        
+                        // Run kubectl logs command and store the output
+                        def logs = sh(script: './kubectl logs -n jenkins e2e-test-app-job-8p7tm -c e2e-test-app', returnStdout: true).trim()
+
+                        // Check if the text "all specs passed" is present in the logs
+                        if (logs.contains("all specs passed")) {
+                            echo "Specs passed: true"
+                            // Add actions to perform when specs are passed
+                        } else {
+                            echo "Specs passed: false"
+                            // Add actions to perform when specs are not passed
+                        }
 
                         //kill the created pods and service.
 
