@@ -62,7 +62,7 @@ pipeline {
                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                     waitForReport()
                     sh "./kubectl exec -n jenkins $jenkinsPod -- cat /var/jenkins_home/html/index.html > report_build_${env.BUILD_NUMBER}.html"
-                    archiveArtifacts artifacts: 'report_build_${env.BUILD_NUMBER}.html', onlyIfSuccessful: true
+                    archiveArtifacts artifacts: "report_build_${env.BUILD_NUMBER}.html", onlyIfSuccessful: true
                     }
                 }
             }
