@@ -78,7 +78,7 @@ pipeline {
                         logs = sh(script: "./kubectl logs -n jenkins $cypressPod -c e2e-test-app", returnStdout: true).trim()
 
                         // Check if the text "all specs passed" is present in the logs
-                        if (logs.contains("all specs passed")) {
+                        if (logs.contains("All specs passed")) {
                             echo "Specs passed: true \n Proceeding to deployment"
                             deploy = true
                         } else {
