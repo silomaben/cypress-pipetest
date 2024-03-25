@@ -13,7 +13,7 @@ spec:
           image: silomaben/cypresstest-e2e
           ports:
             - containerPort: 80
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           volumeMounts:
             - name: jenkins-vol
               mountPath: /var/jenkins_home
