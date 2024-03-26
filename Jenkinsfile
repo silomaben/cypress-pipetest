@@ -162,7 +162,7 @@ pipeline {
                             def statusCode = statusOutput.toInteger()
 
 
-                            if (statusCode == 200) {
+                            if (statusCode == 209) {
                                  // remove old report
                                 sh 'rm -f /var/jenkins_home/html/index.html' 
 
