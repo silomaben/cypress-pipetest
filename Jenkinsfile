@@ -42,10 +42,12 @@ pipeline {
 
                         ./kubectl get pods -n jenkins
 
-                       curl http://express-app-service/students
+                       
+                       curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students
                         '''
                         // sh './kubectl apply -f ui-app/kubernetes'
                         // sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
+                        // curl http://express-app-service/students
 
                     }
                 }
