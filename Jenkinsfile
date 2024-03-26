@@ -47,7 +47,7 @@ pipeline {
                         def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
                         
                         // Convert output to integer
-                        def statusCode = statusOutput.toInteger()
+                        statusCode = statusOutput.toInteger()
                         
                         // Check status code
                         if (statusCode == 200) {
