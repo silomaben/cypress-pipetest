@@ -10,6 +10,7 @@ pipeline {
         cypressPod = ''
         logs = ''
         deploy = false
+        status_code = ''
     }
 
     stages {
@@ -37,17 +38,28 @@ pipeline {
 
                         sh './kubectl apply -f express-api/kubernetes'
 
+                        status_code=$(curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students)
 
+                    }
+                }
+            }
+        }
+
+        stage('Run UI') {
+            steps {
+                script {
+                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+            
+                    if($status_code === 200){
                         sh '''
+                           ./kubectl apply -f ui-app/kubernetes
 
-                        ./kubectl get pods -n jenkins
-
-                       
-                       curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students
+                           ./kubectl get pods -n jenkins
+                        
                         '''
-                        // sh './kubectl apply -f ui-app/kubernetes'
-                        // sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
-                        // curl http://express-app-service/students
+                    }else{
+                        echo "Api not created"
+                    }
 
                     }
                 }
