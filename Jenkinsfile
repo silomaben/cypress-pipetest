@@ -105,8 +105,8 @@ pipeline {
         stage('Run UI') {
             steps {
                 script {
-                    def retries = 3
-                    def delaySeconds = 10
+                    def retries = 7
+                    def delaySeconds = 15
                     def attempts = 0
 
 
@@ -138,8 +138,8 @@ pipeline {
         stage('Run cypress test') {
             steps {
                 script {
-                    def retries = 3
-                    def delaySeconds = 10
+                    def retries = 7
+                    def delaySeconds = 15
                     def attempts = 0
 
 
