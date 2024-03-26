@@ -85,10 +85,28 @@ pipeline {
                         } else {
                             echo "Status is not 200 - ${statusCode}"
                         }
+                    }
+                }
+            }
+        }
 
+        stage('Run CYPRESS') {
+            steps {
+                script {
+                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+            
+                    // Check status code
+                        if (statusCode == 200) {
+                            sh '''
+                              ./kubectl apply -f cypress-tests/kubernetes
 
-                        
-
+                                sleep 50
+                              ./kubectl get pods -n jenkins
+                            '''
+                            
+                        } else {
+                            echo "Status is not 200 - ${statusCode}"
+                        }
                     }
                 }
             }
