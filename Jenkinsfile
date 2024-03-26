@@ -140,7 +140,9 @@ pipeline {
                     def delaySeconds = 10
                     def attempts = 0
 
-                    sh './kubectl get pods -n jenkins'
+                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
+                      sh './kubectl get pods -n jenkins'
+                    }
                     sh 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service'
 
                     // Execute curl command to check if api endpoint returns successful response
