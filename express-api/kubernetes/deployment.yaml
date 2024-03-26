@@ -21,6 +21,19 @@ spec:
           image: silomaben/express-api
           ports:
             - containerPort: 3000
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
       restartPolicy: Always
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-app-service
+  namespace: jenkins 
+spec:
+  selector:
+    app: express-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: NodePort
