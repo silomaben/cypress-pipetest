@@ -82,7 +82,7 @@ pipeline {
                         }
 
                         // wait for pods to terminate
-                        sleep 25
+                        sleep 30
                     }
                 }
             }                      
