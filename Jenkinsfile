@@ -109,17 +109,18 @@ pipeline {
                     def delaySeconds = 10
                     def attempts = 0
 
-                    // Execute curl command to check if api endpoint returns successful response
-                    def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
-                        
-                    // Convert output to integer
-                    def statusCode = statusOutput.toInteger()
 
                     retry(retries) {
                         attempts++
                         // Inside the retry block, we'll retry the check for API status
                         withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                             
+                            // Execute curl command to check if api endpoint returns successful response
+                            def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
+                                
+                            // Convert output to integer
+                            def statusCode = statusOutput.toInteger()
+
                             if (statusCode == 200) {
                                 sh "./kubectl apply -f ui-app/kubernetes"
                             } else {
@@ -145,14 +146,15 @@ pipeline {
                     }
                     sh 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service'
 
-                    // Execute curl command to check if api endpoint returns successful response
-                    def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service', returnStdout: true).trim()
-                        
-                    // Convert output to integer
-                    def statusCode = statusOutput.toInteger()
-
                     retry(retries) {
                         attempts++
+
+                        // Execute curl command to check if api endpoint returns successful response
+                        def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service/', returnStdout: true).trim()
+                            
+                        // Convert output to integer
+                        def statusCode = statusOutput.toInteger()
+
                         withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                             
                             if (statusCode == 200) {
