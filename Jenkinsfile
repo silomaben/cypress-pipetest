@@ -61,26 +61,22 @@ pipeline {
             }
         }
 
-        //  stage('Run UI') {
-        //     steps {
-        //         script {
-        //              withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+         stage('Run UI') {
+            steps {
+                script {
+                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
             
-        //             if( sh  === 200){
-        //                 sh '''
-        //                    ./kubectl apply -f ui-app/kubernetes
+                    // Check status code
+                        if (statusCode == 200) {
+                            sh './kubectl apply -f ui-app/kubernetes'
+                        } else {
+                            echo "Status is not 200 - ${statusCode}"
+                        }
 
-        //                    ./kubectl get pods -n jenkins
-                        
-        //                 '''
-        //             }else{
-        //                 echo "Api not created"
-        //             }
-
-        //             }
-        //         }
-        //     }
-        // }
+                    }
+                }
+            }
+        }
 
         // stage('Get Pod Names') {
         //     steps {
