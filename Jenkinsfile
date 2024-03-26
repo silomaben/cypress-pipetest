@@ -18,14 +18,72 @@ pipeline {
             steps {
                 script {
                     git branch: 'main',
-                        credentialsId: '9e708a8d-c1d1-4a8a-9632-3b31ad932908',
                         url: 'https://github.com/silomaben/cypress-pipetest.git'
                 }
             }
         }
 
+       stage('Kill pods that are running') {
+            steps {
+                withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
+                    script {
+                        // Check if express-app deployment exists
+                        def expressAppExists = sh(
+                            script: "./kubectl get -n jenkins deployment express-app -o json",
+                            returnStatus: true
+                        ) == 0
 
-        stage('Start Pods for Testing') {
+                        // Check if ui-app deployment exists
+                        def uiAppExists = sh(
+                            script: "./kubectl get -n jenkins deployment ui-app -o json",
+                            returnStatus: true
+                        ) == 0
+
+                        // Check if express-app-service service exists
+                        def expressAppServiceExists = sh(
+                            script: "./kubectl get -n jenkins service express-app-service -o json",
+                            returnStatus: true
+                        ) == 0
+
+                        // Check if ui-app service exists
+                        def uiAppServiceExists = sh(
+                            script: "./kubectl get -n jenkins service ui-app -o json",
+                            returnStatus: true
+                        ) == 0
+
+                        // Check if e2e-test-app-job job exists
+                        def e2eTestJobExists = sh(
+                            script: "./kubectl get -n jenkins job e2e-test-app-job -o json",
+                            returnStatus: true
+                        ) == 0
+
+                        // Delete deployments if they exist
+                        if (expressAppExists) {
+                            sh "./kubectl delete -n jenkins deployment express-app"
+                        }
+                        if (uiAppExists) {
+                            sh "./kubectl delete -n jenkins deployment ui-app"
+                        }
+
+                        // Delete services if they exist
+                        if (expressAppServiceExists) {
+                            sh "./kubectl delete -n jenkins service express-app-service"
+                        }
+                        if (uiAppServiceExists) {
+                            sh "./kubectl delete -n jenkins service ui-app"
+                        }
+
+                        // Delete job if it exists
+                        if (e2eTestJobExists) {
+                            sh "./kubectl delete -n jenkins job e2e-test-app-job"
+                        }
+                    }
+                }                      
+            }
+        }
+
+
+        stage('Start API Pods') {
             steps {
                 script {
                      withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
@@ -38,52 +96,39 @@ pipeline {
 
                         sh './kubectl apply -f express-api/kubernetes'
 
-                        // Execute curl command and capture output
+                        // Execute curl command to check if api endpoint returns successful response
                         def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
                         
                         // Convert output to integer
                         statusCode = statusOutput.toInteger()
                         
-                        // Check status code
-                        if (statusCode == 200) {
-                            echo "Status is 200 - OK"
-                        } else {
-                            echo "Status is not 200 - ${statusCode}"
-                        }
+                      
 
                     }
                 }
             }
         }
 
-        stage('Kill pods'){
-            steps{
-                withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
-                    sh '''
-                      ./kubectl delete -n jenkins deployment ui-app
-                    '''
-                }                      
-                
-            }
-        }
-
-
-         stage('Run UI') {
+        
+        stage('Run UI') {
             steps {
                 script {
-                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
-            
-                    // Check status code
-                        if (statusCode == 200) {
-                            sh '''
-                              ./kubectl apply -f ui-app/kubernetes
+                    def retries = 3
+                    def delaySeconds = 15
 
-                                sleep 50
-                              ./kubectl get pods -n jenkins
-                            '''
+                    retry(retries) {
+                        // Inside the retry block, we'll retry the check for API status
+                        withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                             
-                        } else {
-                            echo "Status is not 200 - ${statusCode}"
+
+                            if (statusCode == 200) {
+                                sh "./kubectl apply -f ui-app/kubernetes"
+                            } else {
+                                echo "Status is not 200 - ${statusCode}"
+                                echo "Retrying in ${delaySeconds} seconds..."
+                                sleep delaySeconds
+                                error "API not up after retries"
+                            }
                         }
                     }
                 }
@@ -173,7 +218,7 @@ pipeline {
         //             if(deploy==true){
         //                 echo "Niiice!!! Deploying ATQ now."
         //             } else {
-        //                 echo "Deploying aborted. Check and resolve the failing test and try again!"
+        //                 error "Deploying aborted. Check and resolve the failing test and try again!"
         //             }
         //         }
         //     }
