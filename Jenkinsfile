@@ -105,13 +105,17 @@ pipeline {
         stage('Run UI') {
             steps {
                 script {
-                    def retries = 7
+                    def retries = 12
                     def delaySeconds = 15
                     def attempts = 0
 
 
                     retry(retries) {
+
                         attempts++
+
+                        echo "Running UI stage...Attempt ${attempts}"
+
                         // Inside the retry block, we'll retry the check for API status
                         withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                             
@@ -135,18 +139,21 @@ pipeline {
                 }
             }
         }
+
         stage('Run cypress test') {
             steps {
                 script {
-                    def retries = 7
+                    def retries = 12
                     def delaySeconds = 15
                     def attempts = 0
 
 
                     retry(retries) {
 
-                        echo "in cypress retry ui"
                         attempts++
+
+                        echo "Running Cypress tests stage...Attempt ${attempts}"
+
                         withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                             // Execute curl command to check if api endpoint returns successful response
                             def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service/', returnStdout: true).trim()
