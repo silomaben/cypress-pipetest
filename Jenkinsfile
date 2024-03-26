@@ -48,9 +48,9 @@ pipeline {
                             returnStatus: true
                         ) == 0
 
-                        // Check if ui-app service exists
+                        // Check if ui-app-service exists
                         def uiAppServiceExists = sh(
-                            script: "./kubectl get -n jenkins service ui-app >/dev/null 2>&1",
+                            script: "./kubectl get -n jenkins service ui-app-service >/dev/null 2>&1",
                             returnStatus: true
                         ) == 0
 
@@ -73,7 +73,7 @@ pipeline {
                             sh "./kubectl delete -n jenkins service express-app-service"
                         }
                         if (uiAppServiceExists) {
-                            sh "./kubectl delete -n jenkins service ui-app"
+                            sh "./kubectl delete -n jenkins service ui-app-service"
                         }
 
                         // Delete job if it exists
@@ -139,12 +139,12 @@ pipeline {
                 script {
 
                      // Execute curl command to check if api endpoint returns successful response
-                    def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
+                    def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service', returnStdout: true).trim()
                         
                     // Convert output to integer
                     def statusCode = statusOutput.toInteger()
 
-                    
+
                      withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
             
                     // Check status code
@@ -211,7 +211,7 @@ pipeline {
         //                 sh "./kubectl delete -n jenkins deployment express-app"
         //                 sh "./kubectl delete -n jenkins deployment ui-app"
         //                 sh "./kubectl delete -n jenkins job e2e-test-app-job"
-        //                 sh "./kubectl delete -n jenkins service ui-app"
+        //                 sh "./kubectl delete -n jenkins service ui-app-service"
         //                 sh "./kubectl delete -n jenkins service express-app-service"
         //             }
         //         }
