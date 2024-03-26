@@ -128,7 +128,7 @@ pipeline {
                                 echo "API not yet up. Returned status code - ${statusCode} when probed"
                                 echo "Retrying in ${delaySeconds} seconds..."
                                 sleep delaySeconds
-                                error "API not up. Retry ${attempt}"
+                                echo "API not up. Retry ${attempt}"
                             }
                         }
                     }
