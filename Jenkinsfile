@@ -116,12 +116,12 @@ pipeline {
                         withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                             
                             // Execute curl command to check if api endpoint returns successful response
-                            def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
+                            def statusOutput = sh(script: 'curl -s -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
                                 
                             // Convert output to integer
                             def statusCode = statusOutput.toInteger()
 
-                            if (statusCode == 403) {
+                            if (statusCode == 200) {
                                 sh "./kubectl apply -f ui-app/kubernetes"
                                 echo "found api and started ui"
                             } else {
@@ -142,34 +142,33 @@ pipeline {
                     def delaySeconds = 10
                     def attempts = 0
 
-                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
-                    //   sleep 50
-                      sh '''
-                      ./kubectl get pods -n jenkins
-                     '''
-                    }
-                    sh 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service'
+                    // withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
+                    // //   sleep 50
+                    //   sh '''
+                    //   ./kubectl get pods -n jenkins
+                    //  '''
+                    // }
+                    // sh 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service'
 
                     retry(retries) {
 
                         echo "in cypress retry ui"
                         attempts++
-
-                        // Execute curl command to check if api endpoint returns successful response
-                        def statusOutput = sh(script: 'curl -s  -w "%{http_code}" http://ui-app-service/', returnStdout: true).trim()
-                            
-                        // Convert output to integer
-                        def statusCode = statusOutput.toInteger()
-
                         withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
-                            
+                            // Execute curl command to check if api endpoint returns successful response
+                            def statusOutput = sh(script: 'curl -s  -w "%{http_code}" http://ui-app-service/', returnStdout: true).trim()
+                                
+                            // Convert output to integer
+                            def statusCode = statusOutput.toInteger()
+
+
                             if (statusCode == 200) {
                                  // remove old report
                                 sh 'rm -f /var/jenkins_home/html/index.html' 
 
                                 sh './kubectl apply -f cypress-tests/kubernetes'
 
-                                  echo "statusCode == 200---paassed"
+                                echo "statusCode == 200---paassed"
                             } else {
                                 echo "UI status is not 200 - ${statusCode}"
                                 echo "Retrying in ${delaySeconds} seconds..."
