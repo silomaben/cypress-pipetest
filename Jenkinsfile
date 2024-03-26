@@ -10,7 +10,6 @@ pipeline {
         cypressPod = ''
         logs = ''
         deploy = false
-        api = false
     }
 
     stages {
@@ -38,21 +37,13 @@ pipeline {
 
                         sh './kubectl apply -f express-api/kubernetes'
 
-                        status_code=$(curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students)
-                        if [ "$status_code" -eq 200 ]; then
-                            echo "Status is 200 - OK"
-                        else
-                            echo "Status is not 200 - $status_code"
-                            api = true
-                        fi
-
 
                         sh '''
 
                         ./kubectl get pods -n jenkins
 
                        
-                       
+                       curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students
                         '''
                         // sh './kubectl apply -f ui-app/kubernetes'
                         // sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
