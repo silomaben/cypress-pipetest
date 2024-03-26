@@ -10,7 +10,6 @@ pipeline {
         cypressPod = ''
         logs = ''
         deploy = false
-        statusCode = 0
     }
 
     stages {
@@ -94,19 +93,8 @@ pipeline {
             steps {
                 script {
                      withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
-                        sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'
-                        sh 'chmod u+x ./kubectl'
-
-                        // remove old report
-                        sh 'rm -f /var/jenkins_home/html/index.html' 
-
-                        sh './kubectl apply -f express-api/kubernetes'
-
-                        // Execute curl command to check if api endpoint returns successful response
-                        def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
                         
-                        // Convert output to integer
-                        statusCode = statusOutput.toInteger()
+                        sh './kubectl apply -f express-api/kubernetes'
 
                     }
                 }
@@ -118,20 +106,27 @@ pipeline {
             steps {
                 script {
                     def retries = 3
-                    def delaySeconds = 15
+                    def delaySeconds = 10
+                    def attempts = 0
+
+                    // Execute curl command to check if api endpoint returns successful response
+                    def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
+                        
+                    // Convert output to integer
+                    def statusCode = statusOutput.toInteger()
 
                     retry(retries) {
+                        attempts++
                         // Inside the retry block, we'll retry the check for API status
                         withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                             
-
-                            if (statusCode == 202) {
+                            if (statusCode == 200) {
                                 sh "./kubectl apply -f ui-app/kubernetes"
                             } else {
-                                echo "Status is not 200 - ${statusCode}"
+                                echo "API status is not 200 - ${statusCode}"
                                 echo "Retrying in ${delaySeconds} seconds..."
                                 sleep delaySeconds
-                                error "API not up after retries"
+                                error "API not up. Retry ${attempt}"
                             }
                         }
                     }
@@ -142,16 +137,23 @@ pipeline {
         stage('Run CYPRESS') {
             steps {
                 script {
+
+                     // Execute curl command to check if api endpoint returns successful response
+                    def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
+                        
+                    // Convert output to integer
+                    def statusCode = statusOutput.toInteger()
+
+                    
                      withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
             
                     // Check status code
                         if (statusCode == 200) {
-                            sh '''
-                              ./kubectl apply -f cypress-tests/kubernetes
 
-                              
-                              ./kubectl get pods -n jenkins
-                            '''
+                            // remove old report
+                            sh 'rm -f /var/jenkins_home/html/index.html' 
+
+                            sh './kubectl apply -f cypress-tests/kubernetes'
                             
                         } else {
                             echo "Status is not 200 - ${statusCode}"
