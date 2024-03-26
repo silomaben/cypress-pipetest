@@ -78,6 +78,7 @@ pipeline {
                             sh '''
                               ./kubectl apply -f ui-app/kubernetes
 
+                                sleep 50
                               ./kubectl get pods -n jenkins
                             '''
                             
