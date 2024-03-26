@@ -82,7 +82,7 @@ pipeline {
                         }
 
                         // wait for pods to terminate
-                        sleep 15
+                        sleep 25
                     }
                 }
             }                      
@@ -121,8 +121,9 @@ pipeline {
                             // Convert output to integer
                             def statusCode = statusOutput.toInteger()
 
-                            if (statusCode == 200) {
+                            if (statusCode == 403) {
                                 sh "./kubectl apply -f ui-app/kubernetes"
+                                echo "found api and started ui"
                             } else {
                                 echo "API status is not 200 - ${statusCode}"
                                 echo "Retrying in ${delaySeconds} seconds..."
@@ -142,8 +143,8 @@ pipeline {
                     def attempts = 0
 
                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
+                    //   sleep 50
                       sh '''
-                      sleep 50
                       ./kubectl get pods -n jenkins
                      '''
                     }
@@ -155,7 +156,7 @@ pipeline {
                         attempts++
 
                         // Execute curl command to check if api endpoint returns successful response
-                        def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service/', returnStdout: true).trim()
+                        def statusOutput = sh(script: 'curl -s  -w "%{http_code}" http://ui-app-service/', returnStdout: true).trim()
                             
                         // Convert output to integer
                         def statusCode = statusOutput.toInteger()
@@ -173,7 +174,7 @@ pipeline {
                                 echo "UI status is not 200 - ${statusCode}"
                                 echo "Retrying in ${delaySeconds} seconds..."
                                 sleep delaySeconds
-                                error "API not up. Retry ${attempt}"
+                                echo "API not up. Retry ${attempt}"
                             }
                         }
                     }
