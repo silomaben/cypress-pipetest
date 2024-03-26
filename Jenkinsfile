@@ -54,6 +54,27 @@ pipeline {
             }
         }
 
+         stage('Run UI') {
+            steps {
+                script {
+                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+            
+                    if( sh 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students' === 200){
+                        sh '''
+                           ./kubectl apply -f ui-app/kubernetes
+
+                           ./kubectl get pods -n jenkins
+                        
+                        '''
+                    }else{
+                        echo "Api not created"
+                    }
+
+                    }
+                }
+            }
+        }
+
         // stage('Get Pod Names') {
         //     steps {
         //         script {
