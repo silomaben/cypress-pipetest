@@ -47,7 +47,6 @@ pipeline {
                         fi
 
 
-
                         sh '''
 
                         ./kubectl get pods -n jenkins
