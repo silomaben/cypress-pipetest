@@ -81,8 +81,8 @@ pipeline {
                         if (e2eTestJobExists) {
                             sh "./kubectl delete -n jenkins job e2e-test-app-job"
                         }
-                }
-            }                      
+                    }
+                }                      
             }
         }
 
