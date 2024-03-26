@@ -150,6 +150,8 @@ pipeline {
                     sh 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service'
 
                     retry(retries) {
+
+                        echo "in cypress retry ui"
                         attempts++
 
                         // Execute curl command to check if api endpoint returns successful response
@@ -165,6 +167,8 @@ pipeline {
                                 sh 'rm -f /var/jenkins_home/html/index.html' 
 
                                 sh './kubectl apply -f cypress-tests/kubernetes'
+
+                                  echo "statusCode == 200---paassed"
                             } else {
                                 echo "UI status is not 200 - ${statusCode}"
                                 echo "Retrying in ${delaySeconds} seconds..."
