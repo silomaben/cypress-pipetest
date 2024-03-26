@@ -10,7 +10,7 @@ pipeline {
         cypressPod = ''
         logs = ''
         deploy = false
-        status_code = ""
+        api = false
     }
 
     stages {
@@ -39,32 +39,37 @@ pipeline {
                         sh './kubectl apply -f express-api/kubernetes'
 
                         status_code=$(curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students)
+                        if [ "$status_code" -eq 200 ]; then
+                            api = true
+                            echo "Status is 200 - OK"
+                        else
+                            echo "Status is not 200 - $status_code"
+                        fi
 
                     }
                 }
             }
         }
 
-        // stage('Run UI') {
-        //     steps {
-        //         script {
-        //              withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
-            
-        //             if($status_code === 200){
-        //                 sh '''
-        //                    ./kubectl apply -f ui-app/kubernetes
+        stage('Start Pods for Testing') {
+            steps {
+                script {
+                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+                      
+                    sh './kubectl apply -f express-api/kubernetes'
 
-        //                    ./kubectl get pods -n jenkins
-                        
-        //                 '''
-        //             }else{
-        //                 echo "Api not created"
-        //             }
+                        status_code=$(curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students)
+                        if [ "$status_code" -eq 200 ]; then
+                            api = true
+                            echo "Status is 200 - OK"
+                        else
+                            echo "Status is not 200 - $status_code"
+                        fi
 
-        //             }
-        //         }
-        //     }
-        // }
+                    }
+                }
+            }
+        }
 
         // stage('Get Pod Names') {
         //     steps {
