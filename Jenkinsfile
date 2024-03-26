@@ -82,7 +82,9 @@ pipeline {
                         }
 
                         // wait for pods to terminate
-                        sleep 30
+                        if (e2eTestJobExists || uiAppServiceExists || expressAppServiceExists) {
+                            sleep 30
+                        }
                     }
                 }
             }                      
@@ -220,10 +222,10 @@ pipeline {
 
                         // Check if the text "all specs passed" is present in the logs
                         if (logs.contains("All specs passed")) {
-                            echo "Specs passed: true \n Proceeding to deployment"
+                            echo "All Cypress specs passed. Proceeding with deployment."
                             deploy = true
                         } else {
-                            echo "some tests failed...Check the report for issues \n Deployment aborted"
+                             error "Some tests are failing. Please review the test report to identify and address the failures before retrying. Deployment aborted."
                         }
 
                         //kill the created pods and service.
