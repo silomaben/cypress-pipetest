@@ -66,7 +66,7 @@ pipeline {
                 
             }
         }
-        
+
 
          stage('Run UI') {
             steps {
@@ -75,7 +75,11 @@ pipeline {
             
                     // Check status code
                         if (statusCode == 200) {
-                            sh './kubectl apply -f ui-app/kubernetes'
+                            sh '''
+                              ./kubectl apply -f ui-app/kubernetes
+
+                              ./kubectl get pods -n jenkins
+                            '''
                             
                         } else {
                             echo "Status is not 200 - ${statusCode}"
