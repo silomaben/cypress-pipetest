@@ -4,8 +4,7 @@ import axios from "axios";
 const el = ref()
 
 const students = ref([]);
-let url = "http://express-app-service.default.svc.cluster.local"
-// let url = "52.203.160.83/api"
+let url = "http://express-app-service"
 onMounted(() => {
    axios.get(url + "/students",{
     headers:{
