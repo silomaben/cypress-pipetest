@@ -10,7 +10,7 @@ pipeline {
         cypressPod = ''
         logs = ''
         deploy = false
-        status_code = ''
+        status_code = ""
     }
 
     stages {
@@ -45,26 +45,26 @@ pipeline {
             }
         }
 
-        stage('Run UI') {
-            steps {
-                script {
-                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+        // stage('Run UI') {
+        //     steps {
+        //         script {
+        //              withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
             
-                    if($status_code === 200){
-                        sh '''
-                           ./kubectl apply -f ui-app/kubernetes
+        //             if($status_code === 200){
+        //                 sh '''
+        //                    ./kubectl apply -f ui-app/kubernetes
 
-                           ./kubectl get pods -n jenkins
+        //                    ./kubectl get pods -n jenkins
                         
-                        '''
-                    }else{
-                        echo "Api not created"
-                    }
+        //                 '''
+        //             }else{
+        //                 echo "Api not created"
+        //             }
 
-                    }
-                }
-            }
-        }
+        //             }
+        //         }
+        //     }
+        // }
 
         // stage('Get Pod Names') {
         //     steps {
