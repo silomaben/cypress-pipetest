@@ -31,13 +31,16 @@ pipeline {
                         sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'
                         sh 'chmod u+x ./kubectl'
 
+                    
+
                         sh 'rm -f /var/jenkins_home/html/index.html' 
 
                         sh './kubectl apply -f express-api/kubernetes'
 
+
                         sh '''
 
-                        ./kubectl get pods
+                        ./kubectl get pods -n jenkins
                         '''
                         // sh './kubectl apply -f ui-app/kubernetes'
                         // sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
