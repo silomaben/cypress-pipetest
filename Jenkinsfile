@@ -38,11 +38,6 @@ pipeline {
 
                         sh './kubectl apply -f express-api/kubernetes'
 
-
-                        sh '''
-
-                        ./kubectl get pods -n jenkins
-                        '''
                         // Execute curl command and capture output
                         def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
                         
@@ -69,9 +64,16 @@ pipeline {
                     // Check status code
                         if (statusCode == 200) {
                             sh './kubectl apply -f ui-app/kubernetes'
+                            
                         } else {
                             echo "Status is not 200 - ${statusCode}"
                         }
+
+
+                        sh '''
+
+                        ./kubectl get pods -n jenkins
+                        '''
 
                     }
                 }
