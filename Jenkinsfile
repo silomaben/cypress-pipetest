@@ -140,6 +140,7 @@ pipeline {
                     def delaySeconds = 10
                     def attempts = 0
 
+                    sh './kubectl get pods -n jenkins'
                     sh 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service'
 
                     // Execute curl command to check if api endpoint returns successful response
