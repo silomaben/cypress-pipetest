@@ -81,6 +81,9 @@ pipeline {
                         if (e2eTestJobExists) {
                             sh "./kubectl delete -n jenkins job e2e-test-app-job"
                         }
+
+                        // wait for pods to terminate
+                        sleep 15
                     }
                 }
             }                      
@@ -94,8 +97,7 @@ pipeline {
                         sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'
                         sh 'chmod u+x ./kubectl'
 
-                    
-
+                        // remove old report
                         sh 'rm -f /var/jenkins_home/html/index.html' 
 
                         sh './kubectl apply -f express-api/kubernetes'
@@ -105,8 +107,6 @@ pipeline {
                         
                         // Convert output to integer
                         statusCode = statusOutput.toInteger()
-                        
-                      
 
                     }
                 }
@@ -125,7 +125,7 @@ pipeline {
                         withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                             
 
-                            if (statusCode == 200) {
+                            if (statusCode == 202) {
                                 sh "./kubectl apply -f ui-app/kubernetes"
                             } else {
                                 echo "Status is not 200 - ${statusCode}"
