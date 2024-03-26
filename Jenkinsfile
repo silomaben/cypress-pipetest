@@ -56,6 +56,18 @@ pipeline {
             }
         }
 
+        stage('Kill pods'){
+            steps{
+                withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
+                    sh '''
+                      ./kubectl delete -n jenkins deployment ui-app
+                    '''
+                }                      
+                
+            }
+        }
+        
+
          stage('Run UI') {
             steps {
                 script {
@@ -70,10 +82,7 @@ pipeline {
                         }
 
 
-                        sh '''
-
-                        ./kubectl get pods -n jenkins
-                        '''
+                        
 
                     }
                 }
