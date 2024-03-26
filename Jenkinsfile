@@ -133,35 +133,68 @@ pipeline {
                 }
             }
         }
-
-        stage('Run CYPRESS') {
+        stage('Run cypress test') {
             steps {
                 script {
+                    def retries = 3
+                    def delaySeconds = 10
+                    def attempts = 0
 
-                     // Execute curl command to check if api endpoint returns successful response
+                    // Execute curl command to check if api endpoint returns successful response
                     def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service', returnStdout: true).trim()
                         
                     // Convert output to integer
                     def statusCode = statusOutput.toInteger()
 
-
-                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
-            
-                    // Check status code
-                        if (statusCode == 200) {
-
-                            // remove old report
-                            sh 'rm -f /var/jenkins_home/html/index.html' 
-
-                            sh './kubectl apply -f cypress-tests/kubernetes'
+                    retry(retries) {
+                        attempts++
+                        withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                             
-                        } else {
-                            echo "Status is not 200 - ${statusCode}"
+                            if (statusCode == 200) {
+                                 // remove old report
+                                sh 'rm -f /var/jenkins_home/html/index.html' 
+
+                                sh './kubectl apply -f cypress-tests/kubernetes'
+                            } else {
+                                echo "UI status is not 200 - ${statusCode}"
+                                echo "Retrying in ${delaySeconds} seconds..."
+                                sleep delaySeconds
+                                error "API not up. Retry ${attempt}"
+                            }
                         }
                     }
                 }
             }
         }
+
+        // stage('Run CYPRESS') {
+        //     steps {
+        //         script {
+
+        //              // Execute curl command to check if api endpoint returns successful response
+        //             def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://ui-app-service', returnStdout: true).trim()
+                        
+        //             // Convert output to integer
+        //             def statusCode = statusOutput.toInteger()
+
+
+        //              withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+            
+        //             // Check status code
+        //                 if (statusCode == 200) {
+
+        //                     // remove old report
+        //                     sh 'rm -f /var/jenkins_home/html/index.html' 
+
+        //                     sh './kubectl apply -f cypress-tests/kubernetes'
+                            
+        //                 } else {
+        //                     echo "Status is not 200 - ${statusCode}"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         // stage('Get Pod Names') {
         //     steps {
