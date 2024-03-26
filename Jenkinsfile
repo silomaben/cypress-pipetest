@@ -25,8 +25,12 @@ pipeline {
 
        stage('Kill pods that are running') {
             steps {
-                withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
-                    script {
+                script {
+                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'SECRET_TOKEN', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
+                        // fetch kubectl
+                        sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'
+                        sh 'chmod u+x ./kubectl'
+                        
                         // Check if express-app deployment exists
                         def expressAppExists = sh(
                             script: "./kubectl get -n jenkins deployment express-app -o json",
@@ -77,8 +81,8 @@ pipeline {
                         if (e2eTestJobExists) {
                             sh "./kubectl delete -n jenkins job e2e-test-app-job"
                         }
-                    }
-                }                      
+                }
+            }                      
             }
         }
 
@@ -145,7 +149,7 @@ pipeline {
                             sh '''
                               ./kubectl apply -f cypress-tests/kubernetes
 
-                                sleep 50
+                              
                               ./kubectl get pods -n jenkins
                             '''
                             
